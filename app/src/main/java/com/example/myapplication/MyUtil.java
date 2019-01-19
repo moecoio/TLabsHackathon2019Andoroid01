@@ -31,6 +31,10 @@ public class MyUtil {
         return data;
     }
 
+    public static String stringToHexString(String str){
+        return bytesToHex(str.getBytes());
+    }
+
     public static void log(String msg){
         Log.e("=====!!!!MyApp!!!!=====", msg );
     }

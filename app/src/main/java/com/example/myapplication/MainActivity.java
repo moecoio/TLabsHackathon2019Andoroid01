@@ -1,14 +1,17 @@
 package com.example.myapplication;
 
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -33,8 +36,10 @@ public class MainActivity extends AppCompatActivity {
 
     Button btnSignButton = null;
     Button btnVerify = null;
+    Button btnSend = null;
     TextView txtSignature = null;
     EditText edtMessage = null;
+    EditText edtDeviceId = null;
     Signature sig = null;
 
     @Override
@@ -51,15 +56,17 @@ public class MainActivity extends AppCompatActivity {
     private void mapObjects(){
         btnSignButton = (Button) findViewById(R.id.button);
         btnVerify = (Button) findViewById(R.id.button2);
+        btnSend = (Button) findViewById(R.id.button3);
         txtSignature = (TextView) findViewById(R.id.textView2);
         edtMessage = (EditText) findViewById(R.id.editText);
+        edtDeviceId = (EditText) findViewById(R.id.editText2);
     }
 
     private void setListeners(){
         btnSignButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String message = "Stupid Message";
+                String message = "Temp Message";
                 message = edtMessage.getText().toString();
                 String singStr = getSignature(message);
                 txtSignature.setText(singStr);
@@ -81,7 +88,20 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyUtil.log("Sending data to server");
+                Toast.makeText(MainActivity.this.getBaseContext(),"Sending data to server", Toast.LENGTH_SHORT).show();
+                Srv.postMessage(new DeviceMessage(edtDeviceId.getText().toString()
+                                , MyUtil.stringToHexString(edtMessage.getText().toString())
+                                , txtSignature.getText().toString())
+                );
+            }
+        });
     }
+
 
     private void initSignature(){
 
@@ -182,28 +202,42 @@ public class MainActivity extends AppCompatActivity {
 
 
     private PublicKey getPublicKey(){
-        //getPrivateKey();
-        //return keyPair.getPublic();
-        return getFromPrivate(getPrivateKey());
-    }
-
-    private PublicKey getFromPrivate(PrivateKey pk){
         PublicKey myPublicKey = null;
         String pubKeyStr = "305c300d06092a864886f70d0101010500034b0030480241008fd65d7dd869a507094807e3d7d51abc3d5ee6e86d4fb6960f46d3f29ba530c5b92892a8111c7b03f705c8f7d1f6bb3c2a0df90abc5cde15407dedeeb7e36ae90203010001";
         KeyFactory kf = null;
         try {
             kf = KeyFactory.getInstance("RSA");
             X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(MyUtil.hexToBytes(pubKeyStr));
-            //RSAPrivateKey aaa = (RSAPrivateKey) pk;
-            //MyUtil.log("Modulus:"+aaa.getModulus());
-            //MyUtil.log("Exponent:"+aaa.getPrivateExponent());
-            //RSAPublicKeySpec keySpec = new RSAPublicKeySpec(aaa.getModulus(),aaa.getPrivateExponent());
             myPublicKey = kf.generatePublic(keySpecX509);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (InvalidKeySpecException e) {
             e.printStackTrace();
         }
+        return myPublicKey;
+
+        //getPrivateKey();
+        //return keyPair.getPublic();
+        //return getFromPrivate(getPrivateKey());
+    }
+
+//    private PublicKey getFromPrivate(PrivateKey pk){
+//        PublicKey myPublicKey = null;
+//        String pubKeyStr = "305c300d06092a864886f70d0101010500034b0030480241008fd65d7dd869a507094807e3d7d51abc3d5ee6e86d4fb6960f46d3f29ba530c5b92892a8111c7b03f705c8f7d1f6bb3c2a0df90abc5cde15407dedeeb7e36ae90203010001";
+//        KeyFactory kf = null;
+//        try {
+//            kf = KeyFactory.getInstance("RSA");
+//            X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(MyUtil.hexToBytes(pubKeyStr));
+//            //RSAPrivateKey aaa = (RSAPrivateKey) pk;
+//            //MyUtil.log("Modulus:"+aaa.getModulus());
+//            //MyUtil.log("Exponent:"+aaa.getPrivateExponent());
+//            //RSAPublicKeySpec keySpec = new RSAPublicKeySpec(aaa.getModulus(),aaa.getPrivateExponent());
+//            myPublicKey = kf.generatePublic(keySpecX509);
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        } catch (InvalidKeySpecException e) {
+//            e.printStackTrace();
+//        }
 
 
         //    private void initSignature(){
@@ -255,8 +289,8 @@ public class MainActivity extends AppCompatActivity {
 //        } catch (InvalidKeySpecException e) {
 //            e.printStackTrace();
 //        }
-        return myPublicKey;
-    }
+//        return myPublicKey;
+//    }
 
 //    private static PublicKey getPublicFromPrivate(PrivateKey pk){
 //        PublicKey result = null;

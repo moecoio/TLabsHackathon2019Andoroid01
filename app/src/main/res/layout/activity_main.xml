@@ -21,24 +21,41 @@
         tools:layout_editor_absoluteY="55dp"
         tools:layout_width="wrap_content">
 
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DeviceId" />
+
+        <EditText
+            android:id="@+id/editText2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="aa:bb:cc:dd:ee:ff" />
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Register Device" />
+
         <EditText
             android:id="@+id/editText"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="50dp"
             android:ems="10"
             android:gravity="center"
             android:inputType="textPersonName"
-            android:text="Test Message"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:layout_editor_absoluteY="141dp" />
+            android:text="Test Message" />
 
         <Button
             android:id="@+id/button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="10dp"
             android:text="Sign"
             tools:layout_editor_absoluteX="172dp"
             tools:layout_editor_absoluteY="198dp" />
@@ -47,7 +64,7 @@
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:text="Signature" />
 
         <TextView
@@ -59,12 +76,19 @@
 
         <Button
             android:id="@+id/button2"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:text="verify"
             tools:layout_editor_absoluteX="161dp"
             tools:layout_editor_absoluteY="428dp" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Send" />
 
     </LinearLayout>
 
