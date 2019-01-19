@@ -9,9 +9,15 @@ public class Srv {
 
     private static final String urlRoot = "http://157.230.26.24:3030";
     private static final String urlMsg = "/messages";
+    private static final String urlNewDevice = "/devices";
+
 
     public static void postMessage(DeviceMessage message){
         postString(urlMsg, message.toString());
+    }
+
+    public static void postDevice(DeviceReg devReg){
+        postString(urlNewDevice, devReg.toString());
     }
 
     public static void postString(String url, String payLoad){

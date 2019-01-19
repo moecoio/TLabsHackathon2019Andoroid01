@@ -29,14 +29,16 @@ import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String pubKeyStr = "305c300d06092a864886f70d0101010500034b0030480241008fd65d7dd869a507094807e3d7d51abc3d5ee6e86d4fb6960f46d3f29ba530c5b92892a8111c7b03f705c8f7d1f6bb3c2a0df90abc5cde15407dedeeb7e36ae90203010001";
+    private static final String privateKeyStr = "30820153020100300d06092a864886f70d01010105000482013d308201390201000241008fd65d7dd869a507094807e3d7d51abc3d5ee6e86d4fb6960f46d3f29ba530c5b92892a8111c7b03f705c8f7d1f6bb3c2a0df90abc5cde15407dedeeb7e36ae90203010001024026d3cbfafb9f50fffc3e687ad5b95df5306fdccf232ae073d37de01ade6f1221f3fbe35ad16d1472336679688e212c2f041e3ea4e6701246b06a0efc3940cadd022100e9fa002d5cf6d18e80c11da4116ac78a545dcecac63e9a7e5a5f9a7f0dc2072f0221009d6054f0a0c97143eab06f51277389128237be6d535e0e02165e01623414296702205f405f82182e82f1388965bfbd37733465542b3371b15ac3c596d616934b4211022054f4f305af96ef993d719fb64cb8d72f71b28c0f52a8fca0edd833a103023b5302202ad4904b2011eef98cb7feac715c231ced50fb5066cfd01b8cee72d69896d9ca";
 
-    KeyPair keyPair = null;
+
     byte[] signatureBytes = null;
-
 
     Button btnSignButton = null;
     Button btnVerify = null;
     Button btnSend = null;
+    Button btnDeviceReg = null;
     TextView txtSignature = null;
     EditText edtMessage = null;
     EditText edtDeviceId = null;
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         btnSignButton = (Button) findViewById(R.id.button);
         btnVerify = (Button) findViewById(R.id.button2);
         btnSend = (Button) findViewById(R.id.button3);
+        btnDeviceReg = (Button) findViewById(R.id.button4);
         txtSignature = (TextView) findViewById(R.id.textView2);
         edtMessage = (EditText) findViewById(R.id.editText);
         edtDeviceId = (EditText) findViewById(R.id.editText2);
@@ -98,6 +101,17 @@ public class MainActivity extends AppCompatActivity {
                                 , MyUtil.stringToHexString(edtMessage.getText().toString())
                                 , txtSignature.getText().toString())
                 );
+            }
+        });
+
+        btnDeviceReg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyUtil.log("Send new device to server");
+                Toast.makeText(MainActivity.this.getBaseContext(),"Send new device to server", Toast.LENGTH_SHORT).show();
+                Srv.postDevice(new DeviceReg(edtDeviceId.getText().toString(),pubKeyStr)
+                );
+
             }
         });
     }
@@ -189,8 +203,7 @@ public class MainActivity extends AppCompatActivity {
     private static PrivateKey getPrivateKey(){
         PrivateKey privateKey = null;
         try {
-            String bbb = "30820153020100300d06092a864886f70d01010105000482013d308201390201000241008fd65d7dd869a507094807e3d7d51abc3d5ee6e86d4fb6960f46d3f29ba530c5b92892a8111c7b03f705c8f7d1f6bb3c2a0df90abc5cde15407dedeeb7e36ae90203010001024026d3cbfafb9f50fffc3e687ad5b95df5306fdccf232ae073d37de01ade6f1221f3fbe35ad16d1472336679688e212c2f041e3ea4e6701246b06a0efc3940cadd022100e9fa002d5cf6d18e80c11da4116ac78a545dcecac63e9a7e5a5f9a7f0dc2072f0221009d6054f0a0c97143eab06f51277389128237be6d535e0e02165e01623414296702205f405f82182e82f1388965bfbd37733465542b3371b15ac3c596d616934b4211022054f4f305af96ef993d719fb64cb8d72f71b28c0f52a8fca0edd833a103023b5302202ad4904b2011eef98cb7feac715c231ced50fb5066cfd01b8cee72d69896d9ca";
-            privateKey = KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(MyUtil.hexToBytes(bbb)));
+            privateKey = KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(MyUtil.hexToBytes(privateKeyStr)));
         } catch (InvalidKeySpecException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
@@ -203,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
 
     private PublicKey getPublicKey(){
         PublicKey myPublicKey = null;
-        String pubKeyStr = "305c300d06092a864886f70d0101010500034b0030480241008fd65d7dd869a507094807e3d7d51abc3d5ee6e86d4fb6960f46d3f29ba530c5b92892a8111c7b03f705c8f7d1f6bb3c2a0df90abc5cde15407dedeeb7e36ae90203010001";
         KeyFactory kf = null;
         try {
             kf = KeyFactory.getInstance("RSA");
