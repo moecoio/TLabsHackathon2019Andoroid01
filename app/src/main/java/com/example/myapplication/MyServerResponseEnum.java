@@ -1,5 +1,5 @@
 package com.example.myapplication;
 
 public enum MyServerResponseEnum {
-    OK, ERROR, RESPONSE500
+    OK, BAD_SIGNATURE, DEVICE_NOT_FOUND, RESPONSE500
 }

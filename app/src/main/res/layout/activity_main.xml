@@ -45,7 +45,7 @@
             android:id="@+id/editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:ems="10"
             android:gravity="center"
             android:inputType="textPersonName"
@@ -55,7 +55,6 @@
             android:id="@+id/button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:text="Sign"
             tools:layout_editor_absoluteX="172dp"
             tools:layout_editor_absoluteY="198dp" />
@@ -89,6 +88,27 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="Send" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="StaxId:" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            >
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false" />
+        </LinearLayout>
 
     </LinearLayout>
 

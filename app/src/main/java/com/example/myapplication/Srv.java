@@ -1,7 +1,10 @@
 package com.example.myapplication;
 
 import android.util.Log;
+
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -11,7 +14,55 @@ public class Srv {
     private static final String urlMsg = "/messages";
     private static final String urlNewDevice = "/devices";
 
+    public static MyServerResponse postMessage(DeviceMessage message){
+        return postString(urlMsg, message.toString());
+    }
 
+    public static MyServerResponse postDevice(DeviceReg devReg){
+        return postString(urlNewDevice, devReg.toString());
+    }
+
+    public static MyServerResponse postString(String urlTo, String payLoad){
+        MyServerResponse result = new MyServerResponse();
+        try {
+            URL url = new URL(urlRoot+urlTo);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+            conn.setRequestProperty("Accept","application/json");
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            MyUtil.log("payLoad:" + payLoad);
+            DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+            os.writeBytes(payLoad);
+            os.flush();
+            os.close();
+            String responseCode = String.valueOf(conn.getResponseCode());
+            Log.e("STATUS", responseCode);
+            Log.e("MSG" , conn.getResponseMessage());
+
+            String json_response = "";
+            InputStreamReader in = new InputStreamReader(conn.getInputStream());
+            BufferedReader br = new BufferedReader(in);
+            String text = "";
+            while ((text = br.readLine()) != null) {
+                json_response += text;
+            }
+            MyUtil.log("Response body:"+ json_response);
+
+            conn.disconnect();
+
+            result = new MyServerResponse(json_response, responseCode);
+
+        } catch (Exception e) {
+            Log.e("SERVER CALL ERROR", e.getMessage());
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
+/*
     public static void postMessage(DeviceMessage message){
         postString(urlMsg, message.toString());
     }
@@ -54,7 +105,7 @@ public class Srv {
         }
         new Thread(new PostMsgToSrv(url, payLoad)).start();
     }
-
+*/
 
 
 

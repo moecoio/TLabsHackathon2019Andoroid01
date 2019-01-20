@@ -1,31 +1,29 @@
 package com.example.myapplication;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
-import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 public class MainActivity extends AppCompatActivity {
@@ -40,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnSend = null;
     Button btnDeviceReg = null;
     TextView txtSignature = null;
+    TextView txtStaxId = null;
     EditText edtMessage = null;
     EditText edtDeviceId = null;
     Signature sig = null;
@@ -53,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         mapObjects();
         setListeners();
         initSignature();
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
     private void mapObjects(){
@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         txtSignature = (TextView) findViewById(R.id.textView2);
         edtMessage = (EditText) findViewById(R.id.editText);
         edtDeviceId = (EditText) findViewById(R.id.editText2);
+        txtStaxId = findViewById(R.id.textView5);
     }
 
     private void setListeners(){
@@ -96,24 +97,65 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 MyUtil.log("Sending data to server");
-                Toast.makeText(MainActivity.this.getBaseContext(),"Sending data to server", Toast.LENGTH_SHORT).show();
-                Srv.postMessage(new DeviceMessage(edtDeviceId.getText().toString()
-                                , MyUtil.stringToHexString(edtMessage.getText().toString())
-                                , txtSignature.getText().toString())
-                );
-            }
+                //Toast.makeText(MainActivity.this.getBaseContext(),"Sending data to server", Toast.LENGTH_SHORT).show();
+                //Srv.postMessage();
+                new SendMessageAsync().execute(new DeviceMessage(edtDeviceId.getText().toString()
+                        , MyUtil.stringToHexString(edtMessage.getText().toString())
+                        , txtSignature.getText().toString()));
+;            }
         });
 
         btnDeviceReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MyUtil.log("Send new device to server");
-                Toast.makeText(MainActivity.this.getBaseContext(),"Send new device to server", Toast.LENGTH_SHORT).show();
-                Srv.postDevice(new DeviceReg(edtDeviceId.getText().toString(),pubKeyStr)
-                );
+                //Toast.makeText(MainActivity.this.getBaseContext(),"Send new device to server", Toast.LENGTH_SHORT).show();
+                //Srv.postDevice(new DeviceReg(edtDeviceId.getText().toString(),pubKeyStr));
+                new SendDeviceAsync().execute(new DeviceReg(edtDeviceId.getText().toString(),pubKeyStr));
 
             }
         });
+
+        txtStaxId.setShowSoftInputOnFocus(false);
+
+        txtStaxId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                putToClipboard(txtStaxId.getText().toString());
+                Toast.makeText(MainActivity.this.getBaseContext(),"StaxId in Clipboard", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private class SendDeviceAsync extends AsyncTask<DeviceReg, Integer, MyServerResponse > {
+
+        @Override
+        protected MyServerResponse doInBackground(DeviceReg... deviceReg) {
+            return Srv.postDevice(deviceReg[0]);
+        }
+
+        @Override
+        protected void onPostExecute(MyServerResponse myServerResponse) {
+            //super.onPostExecute(myServerResponseEnum);
+            txtStaxId.setText(myServerResponse.stax_id);
+            Toast.makeText(MainActivity.this.getBaseContext(), myServerResponse.responseCode.toString(), Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
+    private class SendMessageAsync extends AsyncTask<DeviceMessage, Integer, MyServerResponse > {
+
+        @Override
+        protected MyServerResponse doInBackground(DeviceMessage... deviceMsg) {
+            return Srv.postMessage(deviceMsg[0]);
+        }
+
+        @Override
+        protected void onPostExecute(MyServerResponse myServerResponse) {
+            //super.onPostExecute(myServerResponseEnum);
+            txtStaxId.setText(myServerResponse.stax_id);
+            Toast.makeText(MainActivity.this.getBaseContext(), myServerResponse.responseCode.toString(), Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -180,25 +222,6 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
-//    private PrivateKey getPrivateKey() {
-//        if (keyPair == null) {
-//            KeyPairGenerator keyPairGenerator = null;
-//            try {
-//                keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-//            } catch (NoSuchAlgorithmException e) {
-//                e.printStackTrace();
-//            }
-//            keyPairGenerator.initialize(512);
-//            keyPair = keyPairGenerator.generateKeyPair();
-//            String keyPriv = keyPair.getPrivate().getEncoded().toString();
-//            String keyPub = keyPair.getPublic().toString();
-//            MyUtil.log("Private:" + keyPriv);
-//            MyUtil.log("Public:" + keyPub) ;
-//        }
-//        return keyPair.getPrivate();
-//    }
-
-
 
     private static PrivateKey getPrivateKey(){
         PrivateKey privateKey = null;
@@ -233,6 +256,30 @@ public class MainActivity extends AppCompatActivity {
         //return getFromPrivate(getPrivateKey());
     }
 
+
+    private void putToClipboard(String text){
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("", text);
+        clipboard.setPrimaryClip(clip);
+    }
+
+//    private PrivateKey getPrivateKey() {
+//        if (keyPair == null) {
+//            KeyPairGenerator keyPairGenerator = null;
+//            try {
+//                keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+//            } catch (NoSuchAlgorithmException e) {
+//                e.printStackTrace();
+//            }
+//            keyPairGenerator.initialize(512);
+//            keyPair = keyPairGenerator.generateKeyPair();
+//            String keyPriv = keyPair.getPrivate().getEncoded().toString();
+//            String keyPub = keyPair.getPublic().toString();
+//            MyUtil.log("Private:" + keyPriv);
+//            MyUtil.log("Public:" + keyPub) ;
+//        }
+//        return keyPair.getPrivate();
+//    }
 //    private PublicKey getFromPrivate(PrivateKey pk){
 //        PublicKey myPublicKey = null;
 //        String pubKeyStr = "305c300d06092a864886f70d0101010500034b0030480241008fd65d7dd869a507094807e3d7d51abc3d5ee6e86d4fb6960f46d3f29ba530c5b92892a8111c7b03f705c8f7d1f6bb3c2a0df90abc5cde15407dedeeb7e36ae90203010001";
