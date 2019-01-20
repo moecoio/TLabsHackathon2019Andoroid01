@@ -40,6 +40,7 @@ public class Srv {
             String responseCode = String.valueOf(conn.getResponseCode());
             Log.e("STATUS", responseCode);
             Log.e("MSG" , conn.getResponseMessage());
+            result.setResponseCode(responseCode);
 
             String json_response = "";
             InputStreamReader in = new InputStreamReader(conn.getInputStream());

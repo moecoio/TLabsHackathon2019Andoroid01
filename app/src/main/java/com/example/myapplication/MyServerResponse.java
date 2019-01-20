@@ -22,13 +22,17 @@ public class MyServerResponse {
             this.id = item.getString("id");
             this.stax_id = item.getString("stax_id");
 
-            if (code.equals("200")) this.responseCode = MyServerResponseEnum.OK;
-            else if (code.equals("500")) this.responseCode =  MyServerResponseEnum.RESPONSE500;
-            else if (code.equals("404")) this.responseCode =  MyServerResponseEnum.DEVICE_NOT_FOUND;
-            else this.responseCode = MyServerResponseEnum.BAD_SIGNATURE;
+            setResponseCode(code);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setResponseCode(String code){
+        if (code.equals("200")) this.responseCode = MyServerResponseEnum.OK;
+        else if (code.equals("500")) this.responseCode =  MyServerResponseEnum.RESPONSE500;
+        else if (code.equals("404")) this.responseCode =  MyServerResponseEnum.DEVICE_NOT_FOUND;
+        else this.responseCode = MyServerResponseEnum.BAD_SIGNATURE;
     }
 }
