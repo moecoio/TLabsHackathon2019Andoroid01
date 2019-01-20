@@ -73,6 +73,13 @@
             tools:layout_editor_absoluteX="69dp"
             tools:layout_editor_absoluteY="274dp" />
 
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="163dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/easteregg" />
+
         <Button
             android:id="@+id/button2"
             android:layout_width="match_parent"

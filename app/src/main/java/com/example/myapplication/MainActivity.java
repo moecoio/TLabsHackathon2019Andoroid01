@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     EditText edtMessage = null;
     EditText edtDeviceId = null;
     Signature sig = null;
+    ImageView img = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         edtMessage = (EditText) findViewById(R.id.editText);
         edtDeviceId = (EditText) findViewById(R.id.editText2);
         txtStaxId = findViewById(R.id.textView5);
+        img = findViewById(R.id.imageView);
     }
 
     private void setListeners(){
@@ -70,10 +74,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String message = "Temp Message";
+                img.setVisibility(View.GONE);
                 message = edtMessage.getText().toString();
                 String singStr = getSignature(message);
                 if (message.toLowerCase().equals("who are you?")) {
                     txtSignature.setText("I'm a SIM card");
+                    img.setVisibility(View.VISIBLE);
                 } else {
                     txtSignature.setText(singStr);
                 }
