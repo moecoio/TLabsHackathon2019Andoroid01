@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
         setContentView(R.layout.activity_main);
         mapObjects();
@@ -100,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 //Toast.makeText(MainActivity.this.getBaseContext(),"Sending data to server", Toast.LENGTH_SHORT).show();
                 //Srv.postMessage();
                 new SendMessageAsync().execute(new DeviceMessage(edtDeviceId.getText().toString()
-                        , MyUtil.stringToHexString(edtMessage.getText().toString())
+                        , edtMessage.getText().toString()
                         , txtSignature.getText().toString()));
 ;            }
         });
@@ -117,6 +116,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
         txtStaxId.setShowSoftInputOnFocus(false);
+
+        txtSignature.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                putToClipboard(txtSignature.getText().toString());
+                Toast.makeText(MainActivity.this.getBaseContext(),"Signature in Clipboard", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         txtStaxId.setOnClickListener(new View.OnClickListener() {
             @Override
