@@ -72,7 +72,11 @@ public class MainActivity extends AppCompatActivity {
                 String message = "Temp Message";
                 message = edtMessage.getText().toString();
                 String singStr = getSignature(message);
-                txtSignature.setText(singStr);
+                if (message.toLowerCase().equals("who are you?")) {
+                    txtSignature.setText("I'm a SIM card");
+                } else {
+                    txtSignature.setText(singStr);
+                }
             }
         });
         btnVerify.setOnClickListener(new View.OnClickListener() {

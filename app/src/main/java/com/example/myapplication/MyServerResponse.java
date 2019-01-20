@@ -33,6 +33,7 @@ public class MyServerResponse {
         if (code.equals("200")) this.responseCode = MyServerResponseEnum.OK;
         else if (code.equals("500")) this.responseCode =  MyServerResponseEnum.RESPONSE500;
         else if (code.equals("404")) this.responseCode =  MyServerResponseEnum.DEVICE_NOT_FOUND;
+        else if (code.equals("429")) this.responseCode =  MyServerResponseEnum.NOT_SO_FAST;
         else this.responseCode = MyServerResponseEnum.BAD_SIGNATURE;
     }
 }
